@@ -64,6 +64,8 @@ const GetTacheEtSousTache = async (req, res) => {
 
 const AjouterTache = async (req, res) => {
     try {
+    let cle_api = req.headers.authorization;
+
         if (!req.body || !req.body.titre || !req.body.description || !req.body.date_debut || !req.body.date_echeance) {
             return res.status(400).json({ message: "Erreur, vous devez fournir un corps dans la requête contenant un titre, une description, une date de début et une date d'échéance." });
         }
