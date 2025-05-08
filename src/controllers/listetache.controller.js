@@ -348,6 +348,10 @@ const RetournerCleApi = async (req, res) => {
 
         let motDePasseVerifier = await listeTacheModel.VerifierMotDePasse(courriel);
 
+        if (motDePasseVerifier.length === 0) {
+            return res.status(404).json({message: "Erreur, mauvais courriel ou mot de passe."});
+        }
+
         let motDePasseValide = await bcrypt.compare(motDePasse, motDePasseVerifier[0].password)
 
         if (!motDePasseValide) {
