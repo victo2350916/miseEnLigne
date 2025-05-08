@@ -1,0 +1,1336 @@
+{
+    "openapi": "3.1.0",
+    "info":{
+        "title": "Liste de tâches API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/",
+            "description": "Serveur de développement"
+        }
+    ],
+    "paths": {
+        "/api/liste": {
+            "get": {
+                "summary": "Liste des tâches",
+                "tags": ["Liste"],
+                "description": "Récupérer une liste de toutes les tâches de l'utilisateur",
+                "parameters": [
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Il n'y a pas de tâche dans le système",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de tâches dans le système."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Liste de toutes les tâches de l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties":{
+                                            "id": {
+                                                "type": "int",
+                                                "example": 10
+                                            },
+                                            "utilisateur_id":{
+                                                "type": "int",
+                                                "example": 1
+                                            },
+                                            "titre":{
+                                                "type": "string",
+                                                "example": "IGA"
+                                            },
+                                            "description":{
+                                                "type": "string",
+                                                "example": "Aller chercher du lait"
+                                            },
+                                            "date_debut":{
+                                                "type": "date",
+                                                "example": "2025-04-18T04:00:00.000Z"
+                                            },
+                                            "date_echeance":{
+                                                "type": "date",
+                                                "example": "2025-05-18T04:00:00.000Z"
+                                            },
+                                            "complete":{
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }  
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Échec lors de la récupération des tâches."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tache":{
+            "get":{
+                "summary": "Récupérer une tâche ainsi que ses sous-tâches",
+                "tags": ["Tâches"],
+                "description": "Récupérer une tâche ainsi que ses sous-tâches en fonction du ID de la tâche",
+                "parameters": [
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "ID de la tâche souhaitée",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": true
+                    }
+                ],
+                "responses":{
+                    "400":{
+                        "description": "Il n'y a pas d'ID dans la requête",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un ID dans votre requête."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "Il n'y a pas de tâche associée à l'ID fourni",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a aucune tâche associée à l'ID fourni."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Tâche ainsi que ses sous-tâches retournées avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "tache":{
+                                            "type": "object",
+                                            "properties":{
+                                                "titre":{
+                                                    "type": "string",
+                                                    "example": "IGA"
+                                                },
+                                                "description":{
+                                                    "type": "string",
+                                                    "example":"Aller chercher du lait"
+                                                },
+                                                "complete":{
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "date_debut":{
+                                                    "type": "date",
+                                                    "example": "2025-04-18T04:00:00.000Z"
+                                                },
+                                                "date_echeance":{
+                                                    "type": "date",
+                                                    "example": "2025-05-18T04:00:00.000Z"
+                                                }
+                                            }
+                                        },
+                                        "sousTache":{
+                                            "type": "array",
+                                            "items":{
+                                                "type": "object",
+                                                "properties":{
+                                                    "titre":{
+                                                        "type": "string",
+                                                        "example": "Prendre du bacon"
+                                                    },
+                                                    "complete":{
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Échec lors de la récupération de la tâche."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post":{
+                "summary": "Créer une nouvelle tâche",
+                "tags": ["Tâches"],
+                "description": "Créer une nouvelle tâche en fournissant un titre, une description, une date de début et une date d'échéance",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "titre":{
+                                        "type":"string",
+                                        "example": "IGA"
+                                    },
+                                    "description":{
+                                        "type":"string",
+                                        "example":"Aller chercher du lait"
+                                    },
+                                    "date_debut":{
+                                        "type":"date",
+                                        "example":"2025-05-08"
+                                    },
+                                    "date_echeance":{
+                                        "type":"date",
+                                        "example":"2025-05-10"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un titre, une description, une date de début et une date d'échéance."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Ajout de la tâche effectué avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Tâche ajoutée avec succès!"
+                                        },
+                                        "donnees":{
+                                            "type":"object",
+                                            "properties":{
+                                                "titre":{
+                                                    "type": "string",
+                                                    "example": "IGA"
+                                                },
+                                                "description":{
+                                                    "type": "string",
+                                                    "example":"Aller chercher du lait"
+                                                },
+                                                "date_debut":{
+                                                    "type":"date",
+                                                    "example":"2025-05-08"
+                                                },
+                                                "date_echeance":{
+                                                    "type":"date",
+                                                    "example":"2025-05-10"
+                                                },
+                                                "complete":{
+                                                    "type":"boolean",
+                                                    "example":true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur lors de l'ajout de la tâche."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put":{
+                "summary": "Modifier une tâche",
+                "tags": ["Tâches"],
+                "description": "Modifier une tâche en fournissant un titre, une description, une date de début, une date d'échéance, un état et un id",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "titre":{
+                                        "type":"string",
+                                        "example": "IGA"
+                                    },
+                                    "description":{
+                                        "type":"string",
+                                        "example":"Aller chercher du lait"
+                                    },
+                                    "date_debut":{
+                                        "type":"date",
+                                        "example":"2025-05-08"
+                                    },
+                                    "date_echeance":{
+                                        "type":"date",
+                                        "example":"2025-05-10"
+                                    },
+                                    "complete":{
+                                        "type":"boolean",
+                                        "example":true
+                                    },
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un titre, une description, une date de début, une date d'échéance, un état et un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Modification de la tâche effectuée avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "La mise à jour de la tâche a été effectuée avec succès!"
+                                        },
+                                        "donnees":{
+                                            "type":"object",
+                                            "properties":{
+                                                "titre":{
+                                                    "type": "string",
+                                                    "example": "IGA"
+                                                },
+                                                "description":{
+                                                    "type": "string",
+                                                    "example":"Aller chercher du lait"
+                                                },
+                                                "date_debut":{
+                                                    "type":"date",
+                                                    "example":"2025-05-08"
+                                                },
+                                                "date_echeance":{
+                                                    "type":"date",
+                                                    "example":"2025-05-10"
+                                                },
+                                                "complete":{
+                                                    "type":"boolean",
+                                                    "example":true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la mise à jour de la tâche."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch":{
+                "summary": "Modifier l'état d'une tâche",
+                "tags": ["Tâches"],
+                "description": "Modifier l'état d'une tâche en fournissant un état et un id",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "complete":{
+                                        "type":"boolean",
+                                        "example":true
+                                    },
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un état et un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Modification de l'état de la tâche effectuée avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "La mise à jour de l'état a été effectuée avec succès!"
+                                        },
+                                        "etat":{
+                                            "type":"boolean",
+                                            "example":true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la mise à jour de l'état."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "summary": "Supprimer une tâche",
+                "tags": ["Tâches"],
+                "description": "Supprimer une tâche en fournissant un id",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204":{
+                        "description": "Modification de l'état de la tâche effectuée avec succès"
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la suppression de la tâche avec l'ID 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/soustache":{
+            "post":{
+                "summary": "Créer une nouvelle sous-tâche",
+                "tags": ["Sous-tâches"],
+                "description": "Créer une nouvelle sous-tâche en fournissant un ID de tâche et un titre",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "tache_id":{
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "titre":{
+                                        "type":"string",
+                                        "example": "Aller chercher du lait"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un ID de tâche et un titre."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Sous-tâche ajoutée avec succès!",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Sous-tâche ajoutée avec succès!"
+                                        },
+                                        "donnees":{
+                                            "type":"object",
+                                            "properties":{
+                                                "tache_id":{
+                                                    "type":"integer",
+                                                    "example":1
+                                                },
+                                                "titre":{
+                                                    "type": "string",
+                                                    "example": "Aller chercher du lait"
+                                                },
+                                                "complete":{
+                                                    "type":"boolean",
+                                                    "example":true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de l'ajout de la sous-tâche."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put":{
+                "summary": "Modifier une sous-tâche",
+                "tags": ["Sous-tâches"],
+                "description": "Modifier une sous-tâche en fournissant un id, un titre et un état",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    },
+                                    "titre":{
+                                        "type":"string",
+                                        "example": "Aller chercher du lait"
+                                    },
+                                    "complete":{
+                                        "type":"boolean",
+                                        "example":true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un titre, un état et un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de sous-tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Modification de la sous-tâche effectuée avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "La mise à jour de la sous-tâche a été effectuée avec succès!"
+                                        },
+                                        "donnees":{
+                                            "type":"object",
+                                            "properties":{
+                                                "id":{
+                                                    "type":"integer",
+                                                    "example":1
+                                                },
+                                                "titre":{
+                                                    "type": "string",
+                                                    "example": "Aller chercher du lait"
+                                                },
+                                                "complete":{
+                                                    "type":"boolean",
+                                                    "example":true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la mise à jour de la sous-tâche."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch":{
+                "summary": "Modifier l'état d'une sous-tâche",
+                "tags": ["Sous-tâches"],
+                "description": "Modifier l'état d'une sous-tâche en fournissant un état et un id",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "complete":{
+                                        "type":"boolean",
+                                        "example":true
+                                    },
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un état et un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de sous-tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Modification de l'état de la sous-tâche effectuée avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "La mise à jour de l'état a été effectuée avec succès!"
+                                        },
+                                        "etat":{
+                                            "type":"boolean",
+                                            "example":true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la mise à jour de l'état."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete":{
+                "summary": "Supprimer une sous-tâche",
+                "tags": ["Sous-tâches"],
+                "description": "Supprimer une sous-tâche en fournissant un id",
+                "parameters":[
+                    {
+                        "in": "headers",
+                        "name": "Authorization",
+                        "description": "Clé API de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "423123"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "id":{
+                                        "type": "integer",
+                                        "example":1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un ID."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "L'ID est invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, il n'y a pas de sous-tâche avec l'ID: 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "204":{
+                        "description": "Modification de l'état de la sous-tâche effectuée avec succès"
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur interne lors de la suppression de la sous-tâche avec l'ID 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/utilisateur":{
+            "post":{
+                "summary": "Créer un nouvel utilisateur",
+                "tags": ["Utilisateur"],
+                "description": "Créer un nouvel utilisateur en fournissant un nom, un prénom, un courriel et un mot de passe",
+                "requestBody": {
+                    "required": true,
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "nom":{
+                                        "type":"string",
+                                        "example": "Bergeron"
+                                    },
+                                    "prenom":{
+                                        "type":"string",
+                                        "example":"Thomas"
+                                    },
+                                    "courriel":{
+                                        "type":"string",
+                                        "example":"tbergeron746@gmail.com"
+                                    },
+                                    "motDePasse":{
+                                        "type":"string",
+                                        "example":"toto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "400":{
+                        "description": "Le corps de la requête n'est pas fourni ou il manque des éléments dans celui-ci",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un corps dans la requête contenant un nom, un prénom, un courriel et un mot de passe."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201":{
+                        "description": "Ajout du nouvel utilisateur effectué avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Utilisateur ajouté avec succès!"
+                                        },
+                                        "donnees":{
+                                            "type":"object",
+                                            "properties":{
+                                                "nom":{
+                                                    "type": "string",
+                                                    "example": "Bergeron"
+                                                },
+                                                "prenom":{
+                                                    "type": "string",
+                                                    "example":"Thomas"
+                                                },
+                                                "courriel":{
+                                                    "type":"string",
+                                                    "example":"tbergeron746@gmail.com"
+                                                },
+                                                "motDePasse":{
+                                                    "type":"string",
+                                                    "example":"tata"
+                                                },
+                                                "cle_api":{
+                                                    "type":"integer",
+                                                    "example": 123456
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur lors de la création de l'utilisateur."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get":{
+                "summary": "Récupérer la clé API",
+                "tags": ["Utilisateur"],
+                "description": "Récupérer la clé API d'un utilisateur en fonction de l'adresse courriel et du mot de passe. Permet d'en créer une nouvelle si l'utilisateur met le paramètre changerCleApi à 1",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "courriel",
+                        "description": "Courriel de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "tbergeron746@gmail.com"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "motDePasse",
+                        "description": "Mot de passe de l'utilisateur",
+                        "schema": {
+                            "type": "string",
+                            "example": "toto"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "changerCleApi",
+                        "description": "S'il est égale à 1, il permet de générer une nouvelle clé API",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false
+                    }
+                ],
+                "responses":{
+                    "400":{
+                        "description": "Il n'y a pas de courriel ou de motDePasse dans la requête",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, vous devez fournir un courriel et un mot de passe."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description": "Mot de passe ou courriel invalide",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur, mauvais courriel ou mot de passe."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200":{
+                        "description": "Tâche ainsi que ses sous-tâches retournées avec succès",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "message":{
+                                            "type":"string",
+                                            "example": "Voici votre clé API: 123456"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Erreur serveur",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties": {
+                                        "message":{
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération de la clé API."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }   
+        }
+    }
+}
