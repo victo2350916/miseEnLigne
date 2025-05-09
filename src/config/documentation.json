@@ -8,6 +8,10 @@
         {
             "url": "http://localhost:3000/",
             "description": "Serveur de développement"
+        },
+        {
+            "url": "https://miseenligne.onrender.com/",
+            "description": "Serveur en ligne"
         }
     ],
     "paths": {
