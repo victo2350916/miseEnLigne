@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import routes from './src/routes/listetache.route.js';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 
 const swaggerDocument = JSON.parse(fs.readFileSync('./src/config/documentation.json', 'utf8'));
 
@@ -14,6 +15,8 @@ const swaggerOptions = {
 };
 
 const app = express();
+
+app.use(cors())
 
 // Code pour le middleware morgan empruté et adapté de https://expressjs.com/en/resources/middleware/morgan.html
 const __filename = fileURLToPath(import.meta.url);
